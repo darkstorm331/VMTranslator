@@ -2,4 +2,4 @@
 *.exe
 
 //.vscode Files
-.vscode/*.*
+.vscode/
