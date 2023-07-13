@@ -31,11 +31,9 @@ int main(int argc, char* argv[])
     while(p.hasMoreLines) {
         p.Advance();
 
-        if(p.command.length() == 0) {
-
-        } else {
-            std::cout << p.command << std::endl;        
-        }
+        if(p.command.length() > 0) {
+            
+        } 
     }
 
     p.Close();
