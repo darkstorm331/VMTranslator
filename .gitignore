@@ -1,0 +1,5 @@
+//Exe Files
+*.exe
+
+//.vscode Files
+.vscode/*.*
