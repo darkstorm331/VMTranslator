@@ -31,9 +31,10 @@ private:
     void IfGoTo(std::string label);
 
 public:
-    CodeWriter(std::string filepath);
+    CodeWriter(std::string filepath, std::string outfile);
     ~CodeWriter();
 
+    void WriteInit();
     void WriteOut(std::string command, std::string arg1, int arg2);
     void Close();
 };

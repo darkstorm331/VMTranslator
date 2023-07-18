@@ -1,22 +1,26 @@
 #include "CodeWriter.h"
 #include <string>
 #include <fstream>
-#include <regex>
 
-CodeWriter::CodeWriter(std::string filepath)
+
+CodeWriter::CodeWriter(std::string filepath, std::string outfile)
 {
-    filename = filepath.substr(filepath.find_last_of("/\\") + 1);
+    filename = outfile.substr(outfile.find_last_of("/\\") + 1);
     filename = filename.substr(0, filename.find("."));
-
-    std::string outFile = std::regex_replace(filepath, std::regex(".vm"), ".asm");
-
-    fileStream.open(outFile, std::fstream::in);
+    
+    fileStream.open(outfile, std::ios::in | std::ios::out | std::ios::app);
 
     labelCounter = 0;
+
+    WriteInit();
 }
 
 CodeWriter::~CodeWriter()
 {
+}
+
+void CodeWriter::WriteInit() {
+
 }
 
 void CodeWriter::WriteOut(std::string command, std::string arg1, int arg2) {
@@ -43,23 +47,37 @@ void CodeWriter::WriteOut(std::string command, std::string arg1, int arg2) {
             PopPointer(arg2);
         }
     } else if(command == "add") {
-        AddSubAndOr(arg1, "+");
+        AddSubAndOr(command, "+");
     } else if(command == "sub") {
-        AddSubAndOr(arg1, "-");
+        AddSubAndOr(command, "-");
     } else if(command == "and") {
-        AddSubAndOr(arg1, "&");
+        AddSubAndOr(command, "&");
     } else if(command == "or") {
-        AddSubAndOr(arg1, "|");
+        AddSubAndOr(command, "|");
     } else if(command == "neg") {
-        NegNot(arg1, "-");
+        NegNot(command, "-");
     } else if(command == "not") {
-        NegNot(arg1, "!");
+        NegNot(command, "!");
     } else if(command == "eq") {
-        EqGtLt(arg1, "JEQ");
+        EqGtLt(command, "JEQ");
     } else if(command == "gt") {
-        EqGtLt(arg1, "JGT");
+        EqGtLt(command, "JGT");
     } else if(command == "lt") {
-        EqGtLt(arg1, "JLT");
+        EqGtLt(command, "JLT");
+    } else if(command == "label") {
+
+    } else if(command == "goto") {
+        
+    } else if(command == "if-goto") {
+        
+    } else if(command == "function") {
+        
+    } else if(command == "call") {
+        
+    } else if(command == "return") {
+        
+    } else {
+        return;        
     }
 }
 
@@ -241,7 +259,7 @@ void CodeWriter::NegNot(std::string command, std::string op) {
     fileStream << "@SP" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
-    fileStream << "D=D" << op << "M" << std::endl;
+    fileStream << "D=" << op << "M" << std::endl;
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
