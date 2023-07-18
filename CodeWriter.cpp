@@ -42,8 +42,24 @@ void CodeWriter::WriteOut(std::string command, std::string arg1, int arg2) {
         } else if(arg1 == "pointer") {
             PopPointer(arg2);
         }
-    } else {
-
+    } else if(command == "add") {
+        AddSubAndOr(arg1, "+");
+    } else if(command == "sub") {
+        AddSubAndOr(arg1, "-");
+    } else if(command == "and") {
+        AddSubAndOr(arg1, "&");
+    } else if(command == "or") {
+        AddSubAndOr(arg1, "|");
+    } else if(command == "neg") {
+        NegNot(arg1, "-");
+    } else if(command == "not") {
+        NegNot(arg1, "!");
+    } else if(command == "eq") {
+        EqGtLt(arg1, "JEQ");
+    } else if(command == "gt") {
+        EqGtLt(arg1, "JGT");
+    } else if(command == "lt") {
+        EqGtLt(arg1, "JLT");
     }
 }
 
