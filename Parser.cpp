@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <fstream>
 
 Parser::Parser(std::string filename)
 {    
@@ -66,8 +67,4 @@ void Parser::Advance() {
 
 void Parser::Close() {
     fileStream.close();
-}
-
-Parser* Parser::MakeParser(std::string filename) {
-    return new Parser(filename);
 }

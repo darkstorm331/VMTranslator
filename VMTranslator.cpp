@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <vector>
 #include "Parser.h"
+#include "CodeWriter.h"
 
 int main(int argc, char* argv[])
 {
@@ -27,16 +28,18 @@ int main(int argc, char* argv[])
 
     //Get cracking
     Parser p(args[0]);
+    CodeWriter cw(args[0]);
 
     while(p.hasMoreLines) {
         p.Advance();
 
         if(p.command.length() > 0) {
-            
+            cw.WriteOut(p.command, p.arg1, p.arg2);           
         } 
     }
 
     p.Close();
+    cw.Close();
 
     return 0;
 }
