@@ -5,7 +5,7 @@
 
 CodeWriter::CodeWriter(std::string filepath, std::string outfile)
 {
-    filename = outfile.substr(outfile.find_last_of("/\\") + 1);
+    filename = filepath.substr(filepath.find_last_of("/\\") + 1);
     filename = filename.substr(0, filename.find("."));
     
     fileStream.open(outfile, std::ios::in | std::ios::out | std::ios::app);
@@ -20,7 +20,12 @@ CodeWriter::~CodeWriter()
 }
 
 void CodeWriter::WriteInit() {
+    fileStream << "// init " << std::endl;
+}
 
+void CodeWriter::ChangeInFile(std::string filepath) {
+    filename = filepath.substr(filepath.find_last_of("/\\") + 1);
+    filename = filename.substr(0, filename.find("."));
 }
 
 void CodeWriter::WriteOut(std::string command, std::string arg1, int arg2) {

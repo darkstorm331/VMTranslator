@@ -15,16 +15,53 @@ int main(int argc, char* argv[])
     std::copy(argv + 1, argv + argc, std::back_inserter(args));    
 
     //Check that number of arguments is 2 (First argument is the directory of exe)
-    if(argc != 2) {
+    if(argc != 2) 
+    {
         printf("Incorrect number of arguments provided. Expected: 1, Actual %d", argc-1);
         return -1;
     } 
 
     std::error_code ec; // For using the non-throwing overloads of functions below.
     if (fs::is_directory(args[0], ec))
-    { 
-        
-        // Process a directory.
+    {         
+        std::string sysVm = args[0] + "\\Sys.vm";
+        Parser p(sysVm);
+        CodeWriter cw(sysVm, args[0] + ".asm");
+
+        while(p.hasMoreLines) {
+            p.Advance();
+
+            if(p.command.length() > 0) 
+            {
+                cw.WriteOut(p.command, p.arg1, p.arg2);           
+            } 
+        }
+
+        for (auto &p : fs::recursive_directory_iterator(args[0]))
+        {
+            if (p.path().extension() == ".vm" && p.path().stem() != "Sys.vm") 
+            {
+                std::string path = p.path().string();
+                printf("%s", path);
+
+                Parser parser(path);
+                cw.ChangeInFile(path);
+
+                while(parser.hasMoreLines) {
+                    parser.Advance();
+
+                    if(parser.command.length() > 0) 
+                    {
+                        cw.WriteOut(parser.command, parser.arg1, parser.arg2);           
+                    } 
+                } 
+
+                parser.Close();               
+            }
+        }
+
+        p.Close();
+        cw.Close();
     }
     if (ec) // Optional handling of possible errors.
     {
@@ -34,14 +71,17 @@ int main(int argc, char* argv[])
     {
         std::filesystem::path fpath = args[0];
 
-        if(fpath.extension() == ".vm") {
+        if(fpath.extension() == ".vm") 
+        {
             Parser p(args[0]);
             CodeWriter cw(args[0], std::regex_replace(args[0], std::regex(".vm"), ".asm"));
 
-            while(p.hasMoreLines) {
+            while(p.hasMoreLines) 
+            {
                 p.Advance();
 
-                if(p.command.length() > 0) {
+                if(p.command.length() > 0) 
+                {
                     cw.WriteOut(p.command, p.arg1, p.arg2);           
                 } 
             }

@@ -35,6 +35,7 @@ public:
     ~CodeWriter();
 
     void WriteInit();
+    void ChangeInFile(std::string file);
     void WriteOut(std::string command, std::string arg1, int arg2);
     void Close();
 };
