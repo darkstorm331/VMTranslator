@@ -1,9 +1,6 @@
 #include "Parser.h"
-#include <iostream>
-#include <string>
 #include <vector>
 #include <sstream>
-#include <fstream>
 
 Parser::Parser(std::string filename)
 {    

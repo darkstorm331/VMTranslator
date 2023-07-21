@@ -1,12 +1,8 @@
-#include <stdio.h>
-#include <iostream>
-#include <fstream>
-#include <string>
 #include <filesystem>
-#include <vector>
 #include "Parser.h"
 #include "CodeWriter.h"
 #include <regex>
+
 namespace fs = std::filesystem;
 
 int main(int argc, char* argv[])
@@ -23,25 +19,15 @@ int main(int argc, char* argv[])
 
     std::error_code ec; // For using the non-throwing overloads of functions below.
     if (fs::is_directory(args[0], ec))
-    {         
-        std::string sysVm = args[0] + "\\Sys.vm";
-        Parser p(sysVm);
-        CodeWriter cw(sysVm, args[0] + ".asm");
-
-        while(p.hasMoreLines) {
-            p.Advance();
-
-            if(p.command.length() > 0) 
-            {
-                cw.WriteOut(p.command, p.arg1, p.arg2);           
-            } 
-        }
-
+    {      
+        CodeWriter cw("", args[0] + ".asm");
+   
         for (auto &p : fs::recursive_directory_iterator(args[0]))
         {
-            if (p.path().extension() == ".vm" && p.path().stem() != "Sys.vm") 
-            {
+            if (p.path().extension() == ".vm") 
+            {             
                 std::string path = p.path().string();
+
                 printf("%s", path);
 
                 Parser parser(path);
@@ -60,7 +46,6 @@ int main(int argc, char* argv[])
             }
         }
 
-        p.Close();
         cw.Close();
     }
     if (ec) // Optional handling of possible errors.

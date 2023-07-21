@@ -2,8 +2,6 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
-#include <sstream>
 #include <fstream>
 
 class CodeWriter
@@ -13,6 +11,8 @@ private:
     std::string filename;
     std::ofstream fileStream;
     int labelCounter;
+    int functionReturnCounter;
+    std::string currentFunction;
 
     void AddSubAndOr(std::string command, std::string op);
     void NegNot(std::string command, std::string op);
@@ -29,6 +29,9 @@ private:
     void Label(std::string label);
     void GoTo(std::string label);
     void IfGoTo(std::string label);
+    void Function(std::string functionName, int args);
+    void Call(std::string functionName, int args);
+    void FuncReturn();
 
 public:
     CodeWriter(std::string filepath, std::string outfile);

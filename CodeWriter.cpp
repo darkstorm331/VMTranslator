@@ -1,7 +1,4 @@
 #include "CodeWriter.h"
-#include <string>
-#include <fstream>
-
 
 CodeWriter::CodeWriter(std::string filepath, std::string outfile)
 {
@@ -11,6 +8,9 @@ CodeWriter::CodeWriter(std::string filepath, std::string outfile)
     fileStream.open(outfile, std::ios::in | std::ios::out | std::ios::app);
 
     labelCounter = 0;
+    functionReturnCounter = 0;
+
+    currentFunction = "";
 
     WriteInit();
 }
@@ -21,6 +21,11 @@ CodeWriter::~CodeWriter()
 
 void CodeWriter::WriteInit() {
     fileStream << "// init " << std::endl;
+    fileStream << "@256" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "M=D" << std::endl;
+
 }
 
 void CodeWriter::ChangeInFile(std::string filepath) {
@@ -70,17 +75,17 @@ void CodeWriter::WriteOut(std::string command, std::string arg1, int arg2) {
     } else if(command == "lt") {
         EqGtLt(command, "JLT");
     } else if(command == "label") {
-
+        Label(arg1);
     } else if(command == "goto") {
-        
+        GoTo(arg1);
     } else if(command == "if-goto") {
-        
+        IfGoTo(arg1);
     } else if(command == "function") {
-        
+        Function(arg1, arg2);
     } else if(command == "call") {
-        
+        Call(arg1, arg2);
     } else if(command == "return") {
-        
+        FuncReturn();
     } else {
         return;        
     }
@@ -308,4 +313,140 @@ void CodeWriter::EqGtLt(std::string command, std::string op) {
     fileStream << "M=M+1" << std::endl;
 
     labelCounter++;
+}
+
+void CodeWriter::Label(std::string labelText) {
+    std::string labelFull = currentFunction + "$" + labelText;
+
+    fileStream << "(" << labelFull << ")" << std::endl;
+}
+
+void CodeWriter::Function(std::string functionName, int args) {
+    std::string funcFullName = filename + "." + functionName;
+    currentFunction = funcFullName;
+
+    fileStream << "(" << funcFullName << ")" << std::endl;
+    
+    for(int i; i < args; i++) {
+        PushConstant(0);
+    }       
+}
+
+void CodeWriter::Call(std::string functionName, int args) {    
+    std::string goToFunction = filename + "." + functionName;
+    std::string returnLabel = currentFunction + "$ret." + std::to_string(functionReturnCounter);
+
+    fileStream << "@" << returnLabel << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "M=M+1" << std::endl;
+    fileStream << "@LCL" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "M=M+1" << std::endl;
+    fileStream << "@ARG" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "M=M+1" << std::endl;
+    fileStream << "@THIS" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "M=M+1" << std::endl;
+    fileStream << "@THAT" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "M=M+1" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@5" << std::endl;
+    fileStream << "D=D-A" << std::endl;
+    fileStream << "@" << args << std::endl;
+    fileStream << "D=D-A" << std::endl;
+    fileStream << "@ARG" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@LCL" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@" << goToFunction << std::endl;
+    fileStream << "0 ; JMP" << std::endl;
+    fileStream << "(" << returnLabel << ")" << std::endl;
+
+    functionReturnCounter++;
+}
+
+void CodeWriter::FuncReturn() {
+    fileStream << "@SP" << std::endl;
+    fileStream << "M=M-1" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "@ARG" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "M=D+1" << std::endl;
+    fileStream << "@LCL" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@R13" << std::endl;
+    fileStream << "M=D-1" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "@THAT" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@R13" << std::endl;
+    fileStream << "M=M-1" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "@THIS" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@R13" << std::endl;
+    fileStream << "M=M-1" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "@ARG" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@R13" << std::endl;
+    fileStream << "M=M-1" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "@LCL" << std::endl;
+    fileStream << "M=D" << std::endl;
+
+    fileStream << "@R13" << std::endl;
+    fileStream << "M=M-1" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "0 ; JMP" << std::endl;
+}
+
+void CodeWriter::GoTo(std::string label) {
+    std::string labelFull = currentFunction + "$" + label;
+
+    fileStream << "@" << labelFull << std::endl;
+    fileStream << "0 ; JMP" << std::endl;
+}
+
+void CodeWriter::IfGoTo(std::string label) {
+    std::string labelFull = currentFunction + "$" + label;
+
+    fileStream << "@SP" << std::endl;
+    fileStream << "M=M-1" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "@" << labelFull << std::endl;
+    fileStream << "D ; JGT" << std::endl;
 }
