@@ -24,9 +24,31 @@ void CodeWriter::WriteInit() {
     fileStream << "// init " << std::endl;
     fileStream << "@256" << std::endl;
     fileStream << "D=A" << std::endl;
-    fileStream << "@SP" << std::endl;
+    fileStream << "@0" << std::endl;
     fileStream << "M=D" << std::endl;
-    Call("Sys.init", 0);
+    fileStream << "@300" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@1" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@400" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@2" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@3000" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@3" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@3010" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@4" << std::endl;
+    fileStream << "M=D" << std::endl;
+    fileStream << "@SP" << std::endl;
+    fileStream << "A=M" << std::endl;
+
+    currentFunction = "Sys.init";
+   
+    fileStream << "@Sys.init" << std::endl;
+    fileStream << "0 ; JMP" << std::endl;
 }
 
 void CodeWriter::ChangeInFile(std::string filepath) {
@@ -327,15 +349,16 @@ void CodeWriter::Function(std::string functionName, int args) {
 
     fileStream << "(" << functionName << ")" << std::endl;
     
-    for(int i; i < args; i++) {
+    for(int i = 0; i < args; i++) {
         PushConstant(0);
     }       
 }
 
 void CodeWriter::Call(std::string functionName, int args) {    
-    std::string goToFunction = filename + "." + functionName;
+    std::string goToFunction = functionName;
     std::string returnLabel = currentFunction + "$ret." + std::to_string(functionReturnCounter);
 
+    fileStream << "// call " << functionName << args << std::endl;
     fileStream << "@" << returnLabel << std::endl;
     fileStream << "D=A" << std::endl;
     fileStream << "@SP" << std::endl;
@@ -344,35 +367,35 @@ void CodeWriter::Call(std::string functionName, int args) {
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
     fileStream << "@LCL" << std::endl;
-    fileStream << "D=A" << std::endl;
+    fileStream << "D=M" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
     fileStream << "@ARG" << std::endl;
-    fileStream << "D=A" << std::endl;
+    fileStream << "D=M" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
     fileStream << "@THIS" << std::endl;
-    fileStream << "D=A" << std::endl;
+    fileStream << "D=M" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
-    fileStream << "@THAT" << std::endl;
-    fileStream << "D=A" << std::endl;
+    fileStream << "@THAT" << std::endl; 
+    fileStream << "D=M" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
     fileStream << "@SP" << std::endl;
-    fileStream << "D=A" << std::endl;
+    fileStream << "D=M" << std::endl;
     fileStream << "@5" << std::endl;
     fileStream << "D=D-A" << std::endl;
     fileStream << "@" << args << std::endl;
@@ -380,7 +403,7 @@ void CodeWriter::Call(std::string functionName, int args) {
     fileStream << "@ARG" << std::endl;
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
-    fileStream << "D=A" << std::endl;
+    fileStream << "D=M" << std::endl;
     fileStream << "@LCL" << std::endl;
     fileStream << "M=D" << std::endl;
     fileStream << "@" << goToFunction << std::endl;
@@ -391,17 +414,20 @@ void CodeWriter::Call(std::string functionName, int args) {
 }
 
 void CodeWriter::FuncReturn() {
+    fileStream << "// return" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@ARG" << std::endl;
-    fileStream << "M=D" << std::endl;
-    fileStream << "D=A" << std::endl;
-    fileStream << "@SP" << std::endl;
+    fileStream << "A=M" << std::endl;
+    fileStream << "M=D" << std::endl; 
+    fileStream << "@ARG" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "@SP" << std::endl;   
     fileStream << "M=D+1" << std::endl;
     fileStream << "@LCL" << std::endl;
-    fileStream << "D=A" << std::endl;
+    fileStream << "D=M" << std::endl;
     fileStream << "@R13" << std::endl;
     fileStream << "M=D-1" << std::endl;
     fileStream << "A=M" << std::endl;
@@ -426,7 +452,6 @@ void CodeWriter::FuncReturn() {
     fileStream << "D=M" << std::endl;
     fileStream << "@LCL" << std::endl;
     fileStream << "M=D" << std::endl;
-
     fileStream << "@R13" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
@@ -448,5 +473,5 @@ void CodeWriter::IfGoTo(std::string label) {
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@" << labelFull << std::endl;
-    fileStream << "D ; JGT" << std::endl;
+    fileStream << "D ; JNE" << std::endl;
 }

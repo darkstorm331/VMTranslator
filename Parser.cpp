@@ -21,7 +21,7 @@ void Parser::Advance() {
             std::string currentLine;            
             std::getline(fileStream, currentLine);
 
-            if(currentLine.find("//") == std::string::npos) {
+            if(currentLine.find("//") > 0) {
                 std::stringstream ss(currentLine);
                 std::string token;
                 while (getline(ss, token, ' ')) {                   
@@ -29,7 +29,25 @@ void Parser::Advance() {
                     commandSegments.push_back(token);
                 }
 
-                switch (commandSegments.size())
+                int commandSize = commandSegments.size();
+
+                if(commandSize > 3) {
+                    if(commandSegments.at(2) == "") {
+                        if(commandSegments.at(1) == "") {
+                            if(commandSegments.at(0) == "") {
+                                commandSize = 0;
+                            } else {
+                                commandSize = 1;
+                            }
+                        } else {
+                            commandSize = 2;
+                        }
+                    } else {
+                        commandSize = 3;
+                    }
+                }
+
+                switch (commandSize)
                 {
                 case 0:
                     break;
