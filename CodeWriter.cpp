@@ -1,11 +1,12 @@
 #include "CodeWriter.h"
+#include <fstream>
 
 CodeWriter::CodeWriter(std::string filepath, std::string outfile)
 {
     filename = filepath.substr(filepath.find_last_of("/\\") + 1);
     filename = filename.substr(0, filename.find("."));
     
-    fileStream.open(outfile, std::ios::in | std::ios::out | std::ios::app);
+    fileStream.open(outfile);
 
     labelCounter = 0;
     functionReturnCounter = 0;
@@ -25,7 +26,7 @@ void CodeWriter::WriteInit() {
     fileStream << "D=A" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=D" << std::endl;
-
+    Call("Sys.init", 0);
 }
 
 void CodeWriter::ChangeInFile(std::string filepath) {
@@ -322,10 +323,9 @@ void CodeWriter::Label(std::string labelText) {
 }
 
 void CodeWriter::Function(std::string functionName, int args) {
-    std::string funcFullName = filename + "." + functionName;
-    currentFunction = funcFullName;
+    currentFunction = functionName;
 
-    fileStream << "(" << funcFullName << ")" << std::endl;
+    fileStream << "(" << functionName << ")" << std::endl;
     
     for(int i; i < args; i++) {
         PushConstant(0);

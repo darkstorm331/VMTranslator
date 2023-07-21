@@ -19,16 +19,15 @@ int main(int argc, char* argv[])
 
     std::error_code ec; // For using the non-throwing overloads of functions below.
     if (fs::is_directory(args[0], ec))
-    {      
-        CodeWriter cw("", args[0] + ".asm");
+    {     
+        std::string outFileName = args[0].substr(args[0].find_last_of("/\\") + 1); 
+        CodeWriter cw("", args[0] + "\\" + outFileName + ".asm");
    
         for (auto &p : fs::recursive_directory_iterator(args[0]))
         {
             if (p.path().extension() == ".vm") 
             {             
                 std::string path = p.path().string();
-
-                printf("%s", path);
 
                 Parser parser(path);
                 cw.ChangeInFile(path);
