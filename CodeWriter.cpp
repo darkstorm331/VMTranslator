@@ -45,10 +45,11 @@ void CodeWriter::WriteInit() {
     fileStream << "@SP" << std::endl;
     fileStream << "A=M" << std::endl;
 
-    currentFunction = "Sys.init";
-   
-    fileStream << "@Sys.init" << std::endl;
-    fileStream << "0 ; JMP" << std::endl;
+    currentFunction = "Bootstrap";
+    Call("Sys.init", 0);
+
+    //fileStream << "@Sys.init" << std::endl;
+    //fileStream << "0 ; JMP" << std::endl;
 }
 
 void CodeWriter::ChangeInFile(std::string filepath) {
