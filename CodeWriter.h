@@ -13,6 +13,8 @@ private:
     int labelCounter;
     int functionReturnCounter;
     std::string currentFunction;
+    bool IsSingleFile;
+    int currentArgs;
 
     void AddSubAndOr(std::string command, std::string op);
     void NegNot(std::string command, std::string op);
@@ -34,7 +36,7 @@ private:
     void FuncReturn();
 
 public:
-    CodeWriter(std::string filepath, std::string outfile);
+    CodeWriter(std::string filepath, std::string outfile, bool isSingleFile);
     ~CodeWriter();
 
     void WriteInit();

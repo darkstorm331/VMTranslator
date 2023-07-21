@@ -1,7 +1,7 @@
 #include "CodeWriter.h"
 #include <fstream>
 
-CodeWriter::CodeWriter(std::string filepath, std::string outfile)
+CodeWriter::CodeWriter(std::string filepath, std::string outfile, bool isSingleFile)
 {
     filename = filepath.substr(filepath.find_last_of("/\\") + 1);
     filename = filename.substr(0, filename.find("."));
@@ -12,6 +12,9 @@ CodeWriter::CodeWriter(std::string filepath, std::string outfile)
     functionReturnCounter = 0;
 
     currentFunction = "";
+    currentArgs = 0;
+
+    IsSingleFile = isSingleFile;
 
     WriteInit();
 }
@@ -21,32 +24,34 @@ CodeWriter::~CodeWriter()
 }
 
 void CodeWriter::WriteInit() {
-    fileStream << "// init " << std::endl;
-    fileStream << "@256" << std::endl;
-    fileStream << "D=A" << std::endl;
-    fileStream << "@0" << std::endl;
-    fileStream << "M=D" << std::endl;
-    fileStream << "@300" << std::endl;
-    fileStream << "D=A" << std::endl;
-    fileStream << "@1" << std::endl;
-    fileStream << "M=D" << std::endl;
-    fileStream << "@400" << std::endl;
-    fileStream << "D=A" << std::endl;
-    fileStream << "@2" << std::endl;
-    fileStream << "M=D" << std::endl;
-    fileStream << "@3000" << std::endl;
-    fileStream << "D=A" << std::endl;
-    fileStream << "@3" << std::endl;
-    fileStream << "M=D" << std::endl;
-    fileStream << "@3010" << std::endl;
-    fileStream << "D=A" << std::endl;
-    fileStream << "@4" << std::endl;
-    fileStream << "M=D" << std::endl;
-    fileStream << "@SP" << std::endl;
-    fileStream << "A=M" << std::endl;
+    if(!IsSingleFile) {
+        fileStream << "// init " << std::endl;
+        fileStream << "@256" << std::endl;
+        fileStream << "D=A" << std::endl;
+        fileStream << "@0" << std::endl;
+        fileStream << "M=D" << std::endl;
+        fileStream << "@300" << std::endl;
+        fileStream << "D=A" << std::endl;
+        fileStream << "@1" << std::endl;
+        fileStream << "M=D" << std::endl;
+        fileStream << "@400" << std::endl;
+        fileStream << "D=A" << std::endl;
+        fileStream << "@2" << std::endl;
+        fileStream << "M=D" << std::endl;
+        fileStream << "@3000" << std::endl;
+        fileStream << "D=A" << std::endl;
+        fileStream << "@3" << std::endl;
+        fileStream << "M=D" << std::endl;
+        fileStream << "@3010" << std::endl;
+        fileStream << "D=A" << std::endl;
+        fileStream << "@4" << std::endl;
+        fileStream << "M=D" << std::endl;
+        fileStream << "@SP" << std::endl;
+        fileStream << "A=M" << std::endl;
 
-    currentFunction = "Bootstrap";
-    Call("Sys.init", 0);
+        currentFunction = "Bootstrap";
+        Call("Sys.init", 0);
+    }
 
     //fileStream << "@Sys.init" << std::endl;
     //fileStream << "0 ; JMP" << std::endl;
