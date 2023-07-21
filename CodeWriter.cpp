@@ -419,48 +419,60 @@ void CodeWriter::FuncReturn() {
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
+
     fileStream << "@ARG" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "M=D" << std::endl; 
+
     fileStream << "@ARG" << std::endl;
     fileStream << "D=M" << std::endl;
+  
     fileStream << "@SP" << std::endl;   
     fileStream << "M=D+1" << std::endl;
-    fileStream << "@LCL" << std::endl;
+
+    fileStream << "@LCL" << std::endl;   
     fileStream << "D=M" << std::endl;
-    fileStream << "@R13" << std::endl;
+    fileStream << "@R14" << std::endl;
     fileStream << "M=D-1" << std::endl;
     fileStream << "A=M" << std::endl;
-    fileStream << "D=M" << std::endl;
+    fileStream << "D=M" << std::endl;   
     fileStream << "@THAT" << std::endl;
     fileStream << "M=D" << std::endl;
-    fileStream << "@R13" << std::endl;
+
+    fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@THIS" << std::endl;
     fileStream << "M=D" << std::endl;
-    fileStream << "@R13" << std::endl;
+
+    fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@ARG" << std::endl;
     fileStream << "M=D" << std::endl;
-    fileStream << "@R13" << std::endl;
+
+    fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@LCL" << std::endl;
     fileStream << "M=D" << std::endl;
-    fileStream << "@R13" << std::endl;
+
+
+    fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "A=D" << std::endl;
     fileStream << "0 ; JMP" << std::endl;
 }
 
 void CodeWriter::GoTo(std::string label) {
     std::string labelFull = currentFunction + "$" + label;
 
+    fileStream << "// goto " << label << std::endl;
     fileStream << "@" << labelFull << std::endl;
     fileStream << "0 ; JMP" << std::endl;
 }
@@ -468,6 +480,7 @@ void CodeWriter::GoTo(std::string label) {
 void CodeWriter::IfGoTo(std::string label) {
     std::string labelFull = currentFunction + "$" + label;
 
+    fileStream << "// if-goto " << label << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
