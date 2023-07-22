@@ -32,7 +32,7 @@ void Parser::Advance() {
                 int commandSize = commandSegments.size();
 
                 if(commandSize > 3) {
-                    if(commandSegments.at(2) == "") {
+                    if(commandSegments.at(2) == "" || commandSegments.at(2) == "//") {
                         if(commandSegments.at(1) == "") {
                             if(commandSegments.at(0) == "") {
                                 commandSize = 0;
@@ -50,8 +50,10 @@ void Parser::Advance() {
                 switch (commandSize)
                 {
                 case 0:
-                    break;
-                
+                    command.clear();
+                    arg1.clear();
+                    arg2 = -999;
+                    break;               
                 case 3:
                     arg2 = std::stoi(commandSegments.at(2));
 

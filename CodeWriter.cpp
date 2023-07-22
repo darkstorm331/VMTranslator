@@ -364,6 +364,8 @@ void CodeWriter::Call(std::string functionName, int args) {
     std::string goToFunction = functionName;
     std::string returnLabel = currentFunction + "$ret." + std::to_string(functionReturnCounter);
 
+    currentArgs = args;
+
     fileStream << "// call " << functionName << args << std::endl;
     fileStream << "@" << returnLabel << std::endl;
     fileStream << "D=A" << std::endl;
@@ -425,17 +427,13 @@ void CodeWriter::FuncReturn() {
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
-
     fileStream << "@ARG" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "M=D" << std::endl; 
-
     fileStream << "@ARG" << std::endl;
-    fileStream << "D=M" << std::endl;
-  
+    fileStream << "D=M" << std::endl; 
     fileStream << "@SP" << std::endl;   
     fileStream << "M=D+1" << std::endl;
-
     fileStream << "@LCL" << std::endl;   
     fileStream << "D=M" << std::endl;
     fileStream << "@R14" << std::endl;
@@ -444,29 +442,24 @@ void CodeWriter::FuncReturn() {
     fileStream << "D=M" << std::endl;   
     fileStream << "@THAT" << std::endl;
     fileStream << "M=D" << std::endl;
-
     fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@THIS" << std::endl;
     fileStream << "M=D" << std::endl;
-
     fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@ARG" << std::endl;
     fileStream << "M=D" << std::endl;
-
     fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@LCL" << std::endl;
     fileStream << "M=D" << std::endl;
-
-
     fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
