@@ -494,6 +494,7 @@ void CodeWriter::FuncReturn() {
     fileStream << "M=D" << std::endl;
 
     fileStream << "@R15" << std::endl;
+    fileStream << "A=M" << std::endl;
     fileStream << "0 ; JMP" << std::endl;
 }
 
