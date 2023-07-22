@@ -374,6 +374,7 @@ void CodeWriter::Call(std::string functionName, int args) {
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
+
     fileStream << "@LCL" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@SP" << std::endl;
@@ -381,6 +382,7 @@ void CodeWriter::Call(std::string functionName, int args) {
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
+
     fileStream << "@ARG" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@SP" << std::endl;
@@ -388,6 +390,7 @@ void CodeWriter::Call(std::string functionName, int args) {
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
+
     fileStream << "@THIS" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@SP" << std::endl;
@@ -395,6 +398,7 @@ void CodeWriter::Call(std::string functionName, int args) {
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
+
     fileStream << "@THAT" << std::endl; 
     fileStream << "D=M" << std::endl;
     fileStream << "@SP" << std::endl;
@@ -402,18 +406,21 @@ void CodeWriter::Call(std::string functionName, int args) {
     fileStream << "M=D" << std::endl;
     fileStream << "@SP" << std::endl;
     fileStream << "M=M+1" << std::endl;
+
     fileStream << "@SP" << std::endl;
     fileStream << "D=M" << std::endl;
-    fileStream << "@5" << std::endl;
-    fileStream << "D=D-A" << std::endl;
     fileStream << "@" << args << std::endl;
+    fileStream << "D=D-A" << std::endl;
+    fileStream << "@5" << std::endl;
     fileStream << "D=D-A" << std::endl;
     fileStream << "@ARG" << std::endl;
     fileStream << "M=D" << std::endl;
+
     fileStream << "@SP" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@LCL" << std::endl;
     fileStream << "M=D" << std::endl;
+
     fileStream << "@" << goToFunction << std::endl;
     fileStream << "0 ; JMP" << std::endl;
     fileStream << "(" << returnLabel << ")" << std::endl;
@@ -423,6 +430,23 @@ void CodeWriter::Call(std::string functionName, int args) {
 
 void CodeWriter::FuncReturn() {
     fileStream << "// return" << std::endl;
+
+    // Set FRAME in R14
+    fileStream << "@LCL" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "@R14" << std::endl;
+    fileStream << "M=D" << std::endl;
+
+    //Set Return Address in R15
+    fileStream << "@5" << std::endl;
+    fileStream << "D=A" << std::endl;
+    fileStream << "@R14" << std::endl;
+    fileStream << "A=M-D" << std::endl;
+    fileStream << "D=M" << std::endl;
+    fileStream << "@R15" << std::endl;
+    fileStream << "M=D" << std::endl;
+
+    //Set Return Value
     fileStream << "@SP" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
@@ -430,41 +454,46 @@ void CodeWriter::FuncReturn() {
     fileStream << "@ARG" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "M=D" << std::endl; 
+
+    //SP = ARG + 1
     fileStream << "@ARG" << std::endl;
     fileStream << "D=M" << std::endl; 
     fileStream << "@SP" << std::endl;   
     fileStream << "M=D+1" << std::endl;
-    fileStream << "@LCL" << std::endl;   
-    fileStream << "D=M" << std::endl;
+
+    //THAT = FRAME - 1
     fileStream << "@R14" << std::endl;
-    fileStream << "M=D-1" << std::endl;
+    fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
-    fileStream << "D=M" << std::endl;   
+    fileStream << "D=M" << std::endl;
     fileStream << "@THAT" << std::endl;
     fileStream << "M=D" << std::endl;
+
+    //THIS = FRAME - 2
     fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@THIS" << std::endl;
     fileStream << "M=D" << std::endl;
+
+    //ARG = FRAME - 3
     fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@ARG" << std::endl;
     fileStream << "M=D" << std::endl;
+
+    //LCL = FRAME - 4
     fileStream << "@R14" << std::endl;
     fileStream << "M=M-1" << std::endl;
     fileStream << "A=M" << std::endl;
     fileStream << "D=M" << std::endl;
     fileStream << "@LCL" << std::endl;
     fileStream << "M=D" << std::endl;
-    fileStream << "@R14" << std::endl;
-    fileStream << "M=M-1" << std::endl;
-    fileStream << "A=M" << std::endl;
-    fileStream << "D=M" << std::endl;
-    fileStream << "A=D" << std::endl;
+
+    fileStream << "@R15" << std::endl;
     fileStream << "0 ; JMP" << std::endl;
 }
 

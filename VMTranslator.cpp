@@ -20,10 +20,10 @@ int main(int argc, char* argv[])
     std::error_code ec; // For using the non-throwing overloads of functions below.
     if (fs::is_directory(args[0], ec))
     {     
-        //std::string outFileName = args[0].substr(args[0].find_last_of("/\\") + 1); 
-        std::string outFileName = args[0].substr(args[0].find_last_of("/") + 1);
-        //CodeWriter cw("", args[0] + "\\" + outFileName + ".asm", false);
-        CodeWriter cw("", args[0] + "/" + outFileName + ".asm", false);
+        std::string outFileName = args[0].substr(args[0].find_last_of("/\\") + 1); 
+        //std::string outFileName = args[0].substr(args[0].find_last_of("/") + 1);
+        CodeWriter cw("", args[0] + "\\" + outFileName + ".asm", false);
+        //CodeWriter cw("", args[0] + "/" + outFileName + ".asm", false);
    
         for (auto &p : fs::recursive_directory_iterator(args[0]))
         {
